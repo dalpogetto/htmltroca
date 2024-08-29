@@ -1,0 +1,66 @@
+<po-loading-overlay *ngIf="loadTela===true" [p-text]="labelLoadTela" [p-screen-lock]="true"></po-loading-overlay>
+
+<div class="cabec">
+  <div class="origem">
+    <po-combo [ngModel]="codEstabel" [p-options]="listaEstabelecimentos" p-label="Estabelecimento Origem"
+      style="min-width: 400px;" [(ngModel)]="codEstabel" (p-change)="onEstabChange($event)" p-icon="bi bi-pin-map"
+      p-placeholder="Selecione o estabelecimento" p-clean="true">
+      <ng-template p-combo-option-template let-option>
+        <div class="po-row">
+          <po-icon class="po-sm-2 po-md-3 po-lg-1" p-size="sm" p-icon="bi bi-pin-map"></po-icon>
+          <div class="po-sm-10 po-md-9 po-lg-11">
+            <div class="po-font-text-large-bold">{{ option.label }}</div>
+            <div class="po-font-text-smaller">Filial: {{ option.codFilial }}</div>
+          </div>
+        </div>
+      </ng-template>
+    </po-combo>
+
+    <po-combo p-label="Técnico Origem" [ngModel]="codTecnicoOri" p-icon="bi bi-person-workspace"
+      style="min-width: 350px;" [(ngModel)]="codTecnicoOri" [p-options]="listaTecnicos" [p-placeholder]="loadTecnico"
+      [p-clean]="true">
+      <ng-template p-combo-option-template let-option>
+        <div class="po-row">
+          <po-icon class="po-sm-2 po-md-3 po-lg-1" p-size="sm" p-icon="bi bi-person-workspace"></po-icon>
+          <div class="po-sm-10 po-md-9 po-lg-11">
+            <div class="po-font-text-large-bold">{{ option.label }}</div>
+            <div class="po-font-text-smaller">Técnico: {{ option.value }}</div>
+          </div>
+        </div>
+      </ng-template>
+    </po-combo>
+
+    <po-button p-icon="bi bi-check2-circle" p-label="Selecionar" (p-click)="onSelecionar()" p-kind="primary" style="margin-top: 24px;"></po-button>
+  </div>
+</div>
+
+
+<div class="grid">
+  <po-table #grid  [p-items]="listaDados" [p-columns]="colunas" [p-striped]="true" p-sort="true" [p-selectable]="true"
+    [p-single-select]="false" [p-hide-table-search]="false" [p-hide-columns-manager]="true" p-container="true"
+    [p-literals]="customLiterals" [p-height]="300" />
+
+    @if(this.grid.getSelectedRows().length > 0){
+    <div class="rodape">
+      <p class="totalItem">Total de Itens: <b>{{this.listaDados !== undefined ? this.listaDados!.length : 0}}</b></p>
+      <div class="destino">
+        <po-combo p-label="Técnico Destino" [ngModel]="codTecnicoDest" p-icon="bi bi-person-workspace"
+          [(ngModel)]="codTecnicoDest" style="min-width: 350px;" [p-options]="listaTecnicos" [p-placeholder]="loadTecnico"
+          [p-clean]="true">
+          <ng-template p-combo-option-template let-option>
+            <div class="po-row">
+              <po-icon class="po-sm-2 po-md-3 po-lg-1" p-size="sm" p-icon="bi bi-person-workspace"></po-icon>
+              <div class="po-sm-10 po-md-9 po-lg-11">
+                <div class="po-font-text-large-bold">{{ option.label }}</div>
+                <div class="po-font-text-smaller">Técnico: {{ option.value }}</div>
+              </div>
+            </div>
+          </ng-template>
+        </po-combo>
+        <po-button p-icon="bi bi-check2-all" p-label="Executar Troca" (p-click)="onExecutar()" p-kind="primary"
+          style="margin-top: 24px;"></po-button>
+      </div>
+      <p class="totalItem">Selecionados: <b> {{this.grid.getSelectedRows()!.length}}</b></p>
+    </div>
+    }
+</div>
