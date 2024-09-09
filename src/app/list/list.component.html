@@ -36,9 +36,24 @@
 
 
 <div class="grid">
-  <po-table #grid  [p-items]="listaDados" [p-columns]="colunas" [p-striped]="true" p-sort="true" [p-selectable]="true"
-    [p-single-select]="false" [p-hide-table-search]="false" [p-hide-columns-manager]="true" p-container="true"
-    [p-literals]="customLiterals" [p-height]="300" />
+  <po-table #grid  [p-items]="listaDados"
+                   [p-columns]="colunas" 
+                   [p-striped]="true" 
+                   p-sort="true" 
+                   [p-selectable]="true"
+                   [p-single-select]="false" 
+                   [p-hide-table-search]="false" 
+                   [p-hide-columns-manager]="true" 
+                   p-container="true" 
+                   [p-sort]="true"
+                   [p-literals]="customLiterals" 
+                   [p-height]="300" >
+          <ng-template p-table-cell-template let-column="column" let-row="row">
+          <div class="menuGrid">
+                <div><button class="btn"  (click)="NotasFiscais(row)"><i class="bi bi-archive"></i><p>Notas Fiscais</p></button></div>
+          </div>
+        </ng-template>
+  </po-table>
 
     @if(this.grid.getSelectedRows().length > 0){
     <div class="rodape">

@@ -1,5 +1,16 @@
+<div class="po-wrapper">
+  <po-menu [p-menus]="menus" [p-automatic-toggle]="false" [p-collapsed]="false" #menuLateral>
+    <div *p-menu-header-template style="background: steelblue; border-radius: 5px;">
+      <div style="min-height: 50px;">
+        <p style="color: white; text-align: center;padding-top: 15px"><b>EMPRÉSTIMO</b></p>
+       
+      </div>
+    </div>
+   
+  </po-menu>
 
+<po-toolbar p-title="AUTO ATENDIMENTO - EMPRÉSTIMO DE PEÇAS"></po-toolbar>  
 <po-page-default>
-  <po-toolbar p-title="AUTO ATENDIMENTO - EMPRÉSTIMO DE PEÇAS"></po-toolbar>
   <router-outlet></router-outlet>
 </po-page-default>
+</div>

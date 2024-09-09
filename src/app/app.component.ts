@@ -31,7 +31,18 @@ export class AppComponent {
   private srvTotvs = inject(ServerTotvsService);
   private formBuilder = inject(FormBuilder);
   readonly menus: Array<PoMenuItem> = [
-    { label: 'htmltrocapecas', action: this.onClick.bind(this) },
+    {
+      label: 'Empréstimo',
+      icon: 'bi bi-calculator',
+      link: '/list',
+      shortLabel: 'Emprestimo',
+    },
+    {
+      label: 'Monitor',
+      icon: 'bi bi-display',
+      link: '/monitor',
+      shortLabel: 'Monitor',
+    },
   ];
 
   //Variaveis 

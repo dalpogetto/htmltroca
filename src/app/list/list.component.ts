@@ -157,7 +157,7 @@ export class ListComponent {
       literals: { cancel: 'Não', confirm: 'Sim' },
       confirm: () => {
         this.loadTela = false;
-        let params: any = { codEstabel: this.codEstabel, codTecnico:this.codTecnicoDest, items: this.grid?.getSelectedRows()};
+        let params: any = { codEstabel: this.codEstabel, codTecnico:this.codTecnicoOri, codTecnicoDestino: this.codTecnicoDest, items: this.grid?.getSelectedRows()};
         console.log(params)
         /* this.srvTotvs.ExecutarTroca(params).subscribe({
           next: (response: any) => {
@@ -173,6 +173,8 @@ export class ListComponent {
     });
 
   }
+
+  NotasFiscais(obj:any){}
 }
 
   

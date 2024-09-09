@@ -1,0 +1,37 @@
+.selecao{
+    display: flex; 
+    align-items:center; 
+    gap:10px;
+    justify-content: center; 
+    justify-items: center;
+    border-radius: 3px; 
+    border: 1px solid #cccc; 
+    height: 70px; 
+    background: #E5E5E5 ;
+    box-shadow: 2px 5px 5px lightgray;
+    margin-bottom: 10px;
+}
+.show{
+    display:block;
+}
+.hide{
+    display:none;
+}
+
+.contadores{
+    display: flex; 
+    justify-content: space-around;
+     align-items: center;
+     gap:10px;
+     margin-top: 5px;
+}
+
+.itemContador{
+    display: flex; 
+    align-items: center; 
+    gap:5px;border: 1px;
+    padding: 5px;
+    border-radius: 4px; 
+    min-width: 150px;
+
+ }

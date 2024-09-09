@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  totvs_url: 'https://hawebdev.dieboldnixdorf.com.br:8543/api/integracao/aat/v1/apiesaatroca', //desenv
+  totvs_url: 'https://hawebdev.dieboldnixdorf.com.br:8543/api/integracao/troca/v1/apiesaatroca', //desenv
   totvs_header:{
     'Content-Type': 'application/json',
     'Authorization': 'Basic ' + btoa("super:prodiebold11"),
