@@ -4,7 +4,7 @@ import { ChangeDetectorRef, Component, inject, OnInit, ViewChild, } from '@angul
 import { RouterOutlet, Router } from '@angular/router';
 import { delay, Subscription } from 'rxjs';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
-import { PoModule, PoTableColumn, PoTableModule, PoButtonModule, PoMenuItem, PoMenuModule, PoModalModule, PoPageModule, PoToolbarModule, PoTableAction, PoModalAction, PoDialogService, PoNotificationService, PoFieldModule, PoDividerModule, PoTableLiterals, PoTableComponent,} from '@po-ui/ng-components';
+import { PoModule, PoTableColumn, PoTableModule, PoButtonModule, PoMenuItem, PoMenuModule, PoModalModule, PoPageModule, PoToolbarModule, PoTableAction, PoModalAction, PoDialogService, PoNotificationService, PoFieldModule, PoDividerModule, PoTableLiterals, PoTableComponent, PoModalComponent,} from '@po-ui/ng-components';
 import { ServerTotvsService } from '../services/server-totvs.service';
 import { ExcelService } from '../services/excel-service.service';
 import { escape } from 'querystring';
@@ -35,7 +35,8 @@ import { environment } from '../environments/environment'
 })
 export class ListComponent {
 
-  @ViewChild('grid', { static: true }) grid: PoTableComponent | undefined;
+  @ViewChild('grid2', { static: true }) grid2: PoTableComponent | undefined;
+  @ViewChild('telaTroca', { static: true }) telaTroca:  | PoModalComponent  | undefined;
 
 
   private srvTotvs = inject(ServerTotvsService);
@@ -54,6 +55,8 @@ export class ListComponent {
   pesquisa!:string
   nomeBotao: any;
   lBotao:boolean = false
+  objSelecionado:any
+  temTroca:boolean=false
 
   //lista: any;
   tipoAcao:string=''
@@ -71,6 +74,28 @@ export class ListComponent {
     codEstabel!: string
     codTecnicoOri!: string
     codTecnicoDest!:string
+
+    public formTroca = this.formB.group({
+      "qt-troca": [0, Validators.required],
+      
+    });
+
+
+    readonly acaoAlterarOrdem: PoModalAction = {
+      label: 'Salvar',
+      action: () => {
+        this.alterarOrdem()
+      },
+     
+      disabled: !this.formTroca.valid,
+    };
+  
+    readonly acaoCancelarOrdem: PoModalAction = {
+      label: 'Cancelar',
+      action: () => {
+        this.telaTroca?.close();
+      },
+    };
 
   ngOnInit(): void {
 
@@ -120,7 +145,7 @@ export class ListComponent {
         if (response === null)
           this.listaDados=[]
         else
-          this.listaDados = response.items
+          this.listaDados = response.items.sort(this.srvTotvs.ordenarCampos(['nro-docto', 'it-codigo']))
         this.loadTela=false
       },
       error: (e) => { this.loadTela=false},
@@ -137,7 +162,7 @@ export class ListComponent {
       return
     } 
 
-    if (this.grid?.getSelectedRows().length === 0) {
+    if (this.grid2?.getSelectedRows().length === 0) {
       this.srvNotification.error('Selecione ao menos um item para a troca !')
       return
     }
@@ -157,7 +182,7 @@ export class ListComponent {
       literals: { cancel: 'Não', confirm: 'Sim' },
       confirm: () => {
         this.loadTela = false;
-        let params: any = { codEstabel: this.codEstabel, codTecnico:this.codTecnicoOri, codTecnicoDestino: this.codTecnicoDest, items: this.grid?.getSelectedRows()};
+        let params: any = { codEstabel: this.codEstabel, codTecnico:this.codTecnicoOri, codTecnicoDestino: this.codTecnicoDest, items: this.grid2?.items};
         console.log(params)
         /* this.srvTotvs.ExecutarTroca(params).subscribe({
           next: (response: any) => {
@@ -174,7 +199,42 @@ export class ListComponent {
 
   }
 
-  NotasFiscais(obj:any){}
+  onSolicitarQuantidade(obj:any){
+    this.objSelecionado = obj
+    this.telaTroca?.open()
+  }
+
+  alterarOrdem(){
+    this.temTroca=false
+    let registro = {...this.objSelecionado, "qt-troca": Number(this.formTroca.controls['qt-troca'].value)}
+    this.grid2?.updateItem(this.objSelecionado, registro)
+    this.listaDados = (this.grid2?.items as any[])
+
+    //Entrada com quantidade 0
+    if (Number(this.formTroca.controls['qt-troca'].value) === 0){
+      let trocaNota = this.listaDados.filter(o => o['nro-docto'] === this.objSelecionado['nro-docto'] && o['qt-troca'] > 0).length > 0
+
+    if(!trocaNota){
+          this.listaDados.forEach(o => {
+            if (o["nro-docto"] === this.objSelecionado["nro-docto"]){
+            o["qt-troca"] = null
+            }
+        })
+      }
+    }
+
+    //Verificar se existe troca para mostrar o selecao de emitente de destino
+    if (Number(this.formTroca.controls['qt-troca'].value) > 0){
+      this.listaDados.forEach(o => {
+        if (o["nro-docto"] === this.objSelecionado["nro-docto"] && o["qt-troca"] === null)
+          o["qt-troca"] = 0
+          this.temTroca=true
+      })
+    }
+
+    this.telaTroca?.close()
+  }
+  //ElementRef.document.getElementsByClassName('po-table-row') cellChecked.setAttribute("ng-reflect-disabled","true"); cellChecked.setAttribute("ng-reflect-checkbox-value","false");
 }
 
   

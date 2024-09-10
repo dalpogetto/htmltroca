@@ -36,12 +36,11 @@
 
 
 <div class="grid">
-  <po-table #grid  [p-items]="listaDados"
+  <po-table #grid2  [p-items]="listaDados"
                    [p-columns]="colunas" 
                    [p-striped]="true" 
                    p-sort="true" 
-                   [p-selectable]="true"
-                   [p-single-select]="false" 
+                 
                    [p-hide-table-search]="false" 
                    [p-hide-columns-manager]="true" 
                    p-container="true" 
@@ -49,13 +48,20 @@
                    [p-literals]="customLiterals" 
                    [p-height]="300" >
           <ng-template p-table-cell-template let-column="column" let-row="row">
-          <div class="menuGrid">
-                <div><button class="btn"  (click)="NotasFiscais(row)"><i class="bi bi-archive"></i><p>Notas Fiscais</p></button></div>
-          </div>
+           @if(column.property === 'qt-troca' && row['qt-troca'] >= 0){
+            <h4 style="background-color: var(--color-10); text-align: end;">{{row['qt-troca']}}</h4>
+           } 
+
+           @if(column.property === 'opcao'){
+            <div class="menuGrid">
+              <div><button class="btn"  (click)="onSolicitarQuantidade(row)"><i class="bi bi-edit"></i><p>Solicitar</p></button></div>
+            </div>
+           } 
+          
         </ng-template>
   </po-table>
 
-    @if(this.grid.getSelectedRows().length > 0){
+    @if(this.temTroca){
     <div class="rodape">
       <p class="totalItem">Total de Itens: <b>{{this.listaDados !== undefined ? this.listaDados!.length : 0}}</b></p>
       <div class="destino">
@@ -75,7 +81,18 @@
         <po-button p-icon="bi bi-check2-all" p-label="Executar Troca" (p-click)="onExecutar()" p-kind="primary"
           style="margin-top: 24px;"></po-button>
       </div>
-      <p class="totalItem">Selecionados: <b> {{this.grid.getSelectedRows()!.length}}</b></p>
+      <p class="totalItem">Selecionados: <b> {{this.grid2.getSelectedRows()!.length}}</b></p>
     </div>
     }
 </div>
+
+<po-modal #telaTroca p-title="Digite a quantidade para empréstimo"
+                              p-size="auto" 
+                              p-click-out="false" 
+                              [p-hide-close]="true"
+                              [p-primary-action]="acaoAlterarOrdem" 
+                              [p-secondary-action]="acaoCancelarOrdem">
+      <form [formGroup]="formTroca">
+        <div class="po-md-6"><po-number name="qt-troca" formControlName="qt-troca" p-label="Quantidade" p-step="1"></po-number></div>
+      </form>
+  </po-modal>

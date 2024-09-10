@@ -35,13 +35,14 @@ export class ServerTotvsService {
   obterColunas(): Array<PoTableColumn> {
     return [
       { property: 'situacao', label:'Situação', type:'template'},
-      { property: 'nro-docto',    label: "Documento"},
+      { property: 'nro-docto',    label: "Documento", },
       { property: 'serie',     label: "Série"},
+      { property: 'nat-operacao',     label: "Nat.Oper"},
       { property: 'it-codigo',    label: "Item"},
-      { property: 'desc-item',      label: "Descrição"},
-      { property: 'qtde-troca',    label: "Qtde Empréstimo", type: 'number', format: "1.0"},
-      { property: 'opcao', label: 'Empréstimo', type: 'cellTemplate' },
-      { property: 'qtde-nota', label: 'Qtde Nota', type:'number', format:'1.0'},
+      { property: 'desc-item',      label: "Descrição", width:'200px'},
+      { property: 'qt-troca',    label: "QtEmp", type: 'cellTemplate', format: "1.0", width:'100px'},
+      { property: 'qt-nota', label: 'QtNota', type:'number', format:'1.0', width:'100px'},
+      { property: 'opcao', label: 'Ação', type: 'cellTemplate' },
      
     
     ];
