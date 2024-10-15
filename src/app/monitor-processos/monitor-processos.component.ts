@@ -1,16 +1,17 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoModalAction, PoNotificationService, PoTableAction, PoTableColumn, PoLoadingModule, PoFieldModule, PoIconModule, PoButtonModule, PoTableModule } from '@po-ui/ng-components';
+import { PoModalAction, PoNotificationService, PoTableAction, PoTableColumn, PoLoadingModule, PoFieldModule, PoIconModule, PoButtonModule, PoTableModule, PoDialogService, PoTooltipModule } from '@po-ui/ng-components';
+import { Usuario } from '../interfaces/usuario';
 import { FormsModule } from '@angular/forms';
 import { NgIf, NgClass } from '@angular/common';
 import { ServerTotvsService } from '../services/server-totvs.service';
 
 @Component({
-    selector: 'app-monitor',
-    templateUrl: './monitor.component.html',
-    styleUrls: ['./monitor.component.css'],
+    selector: 'app-monitor-processos',
+    templateUrl: './monitor-processos.component.html',
+    styleUrls: ['./monitor-processos.component.css'],
     standalone: true,
-    imports: [NgIf, PoLoadingModule, PoFieldModule, FormsModule, PoIconModule, PoButtonModule, PoTableModule, NgClass]
+    imports: [NgIf, PoLoadingModule, PoFieldModule, FormsModule, PoIconModule, PoButtonModule, PoTableModule, NgClass, PoTooltipModule]
 })
 export class MonitorProcessosComponent {
 
@@ -18,6 +19,8 @@ private srvTotvs = inject(ServerTotvsService)
 private srvNotification = inject(PoNotificationService);
 private router = inject(Router)
 private route = inject(ActivatedRoute)
+private srvDialog = inject(PoDialogService);
+  
 
 
 
@@ -36,6 +39,8 @@ mostrarLabel:boolean=false
 colunas!:PoTableColumn[]
 lista!:any[]
 labelContador:string[]=[]
+alturaGrid:number=window.innerHeight - 255
+
 
 //--- Actions
 readonly acoes: PoTableAction[] = [
@@ -62,9 +67,10 @@ readonly acoes: PoTableAction[] = [
 ngOnInit(): void {
 
   this.mostrarLabel=false
+  
 
   this.colunas = this.srvTotvs.obterColunasMonitor()
- // this.srvTotvs.EmitirParametros({ tituloTela: 'HTMLA41 - MONITOR ACOMPANHAMENTO DE PROCESSOS', estabInfo:''});
+  //this.srvTotvs.EmitirParametros({ tituloTela: 'HTMLA41 - MONITOR ACOMPANHAMENTO DE PROCESSOS', estabInfo:''});
 
   let monitor = this.srvTotvs.ObterMonitor()
   if (monitor !== undefined)
@@ -99,6 +105,7 @@ public onListar(){
   let params:any={codEstabel: this.codEstabel}
   this.srvTotvs.ObterProcessosEstab(params).subscribe({
     next: (response:any)=>{
+      console.log("Lista", response)
       this.lista =[]
       this.lista = (response.items as any[]).sort(this.srvTotvs.ordenarCampos(['nr-process']));
       this.labelContador[0] = this.lista.filter(o=> o.situacao === 'E').length.toString()
@@ -106,7 +113,7 @@ public onListar(){
       this.labelContador[2] = this.lista.filter(o=> o.situacao === 'R').length.toString()
       this.labelContador[3] = this.lista.filter(o=> o.situacao === 'B').length.toString()
       this.labelContador[4] = this.lista.filter(o=> o.situacao === 'L').length.toString()
-     // this.srvTotvs.SetarMonitor({listaEstab: this.listaEstabelecimentos, listaGrid: this.lista, estabSelecionado: this.codEstabel})
+      this.srvTotvs.SetarMonitor({listaEstab: this.listaEstabelecimentos, listaGrid: this.lista, estabSelecionado: this.codEstabel})
       this.loadTela = false
     },
     error: (e)=> {this.loadTela = false}
@@ -147,7 +154,7 @@ Reparos(obj:any){
 AbrirTela(obj:any, cTela:string){
   this.loadTela=true
   //Setar Estabelecimento e Usuario utilizado no calculo
- // this.srvTotvs.SetarUsuario(obj["cod-estabel"], obj["cod-emitente"], obj["nr-process"])
+  this.srvTotvs.SetarUsuario(obj["cod-estabel"], obj["cod-emitente"], obj["nr-process"])
    //Parametros da Nota
    let paramsTec: any = {codEstabel: obj["cod-estabel"], codTecnico: obj["cod-emitente"]};
   //Chamar Método
@@ -155,12 +162,80 @@ AbrirTela(obj:any, cTela:string){
     next: (response: any) => {
       //Atualizar Informacoes Tela
       let estab = this.listaEstabelecimentos.find((o) => o.value === this.codEstabel);
-    //  this.srvTotvs.EmitirParametros({estabInfo: estab.label, tecInfo: `${obj['cod-emitente']} ${obj['nome-abrev']}`, processoInfo:response.nrProcesso, processoSituacao: response.situacaoProcesso})
+     // this.srvTotvs.EmitirParametros({estabInfo: estab.label, tecInfo: `${obj['cod-emitente']} ${obj['nome-abrev']}`, processoInfo:response.nrProcesso, processoSituacao: response.situacaoProcesso})
       this.router.navigate([cTela])
     },
   });
 }
 
+onReprocessarNotas(obj:any) {
+  
+  this.srvDialog.confirm({
+    title: 'REPROCESSAR NOTAS',
+    message:
+       "<div class='dlg'><i class='bi bi-question-circle po-font-subtitle'></i><span class='po-font-text-large'> CONFIRMA REPROCESSAMENTO ?</span></div><p>O reprocessamento só deve ser usado com a certeza da parada do processamento normal.</p>",
+      
+
+    confirm: () => {
+      this.loadTela = true;
+      let params: any = {
+        paramsTela: {
+          codEstab: obj['cod-estabel'],
+          codEmitente: obj['cod-emitente'],
+          nrProcess: obj['nr-process']
+        },
+      };
+
+      this.srvTotvs.ReprocessarCalculo(params).subscribe({
+        next: (response: any) => {
+          console.log(response)
+          this.srvNotification.success('Execução do cálculo realizada com sucesso ! Processo RPW: ' + response.rpw)
+          this.onListar()
+          this.loadTela = false;
+        },
+        error: (e) => {
+         // this.srvNotification.error('Ocorreu um erro na requisição')
+          this.loadTela = false;
+        },
+      });
+    },
+    cancel: () => this.srvNotification.error('Cancelada pelo usuário'),
+  });
+}
+
+onReprocessarErros() {
+  if(this.codEstabel === '') return
+  
+  this.srvDialog.confirm({
+    title: 'REPROCESSAR PROCESSOS COM ERRO',
+    message:
+       "<div class='dlg'><i class='bi bi-question-circle po-font-subtitle'></i><span class='po-font-text-large'> CONFIRMA REPROCESSAMENTO DE ERROS ?</span></div><p>O reprocessamento recriará novos pedidos de execução para os processos.</p>",
+      
+
+    confirm: () => {
+      this.loadTela = true;
+      let params: any = {
+        paramsTela: {
+          codEstab: this.codEstabel,
+        },
+      };
+
+      this.srvTotvs.ReprocessarErros(params).subscribe({
+        next: (response: any) => {
+          console.log(response)
+          this.srvNotification.success('Reprocessamento executado com sucesso !')
+          this.onListar()
+          this.loadTela = false;
+        },
+        error: (e) => {
+         // this.srvNotification.error('Ocorreu um erro na requisição')
+          this.loadTela = false;
+        },
+      });
+    },
+    cancel: () => this.srvNotification.error('Cancelada pelo usuário'),
+  });
+}
 
 
 }

@@ -33,7 +33,7 @@ export class AppComponent {
   readonly menus: Array<PoMenuItem> = [
     {
       label: 'Empréstimo',
-      icon: 'bi bi-calculator',
+      icon: 'bi bi-people',
       link: '/list',
       shortLabel: 'Emprestimo',
     },

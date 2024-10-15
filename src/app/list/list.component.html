@@ -46,26 +46,27 @@
                    p-container="true" 
                    [p-sort]="true"
                    [p-literals]="customLiterals" 
-                   [p-height]="300" >
+                   [p-height]="alturaGrid" >
           <ng-template p-table-cell-template let-column="column" let-row="row">
            @if(column.property === 'qt-troca' && row['qt-troca'] >= 0){
-            <h4 style="background-color: var(--color-10); text-align: end;">{{row['qt-troca']}}</h4>
+            <h4 style="background-color: var(--color-09); color: white; text-align: center;">{{row['qt-troca']}}</h4>
            } 
 
            @if(column.property === 'opcao'){
             <div class="menuGrid">
-              <div><button class="btn"  (click)="onSolicitarQuantidade(row)"><i class="bi bi-edit"></i><p>Solicitar</p></button></div>
+              <div><button class="btn"  (click)="onSolicitarQuantidade(row)"><p><i class="bi bi-person-up"></i> Solicitar</p></button></div>
+              <div><button class="btn"  (click)="onCancelarQuantidade(row)"><p><i class="bi bi-x-square"></i> Cancelar</p></button></div>
             </div>
            } 
           
         </ng-template>
   </po-table>
 
-    @if(this.temTroca){
+  @if(this.temTroca){
     <div class="rodape">
-      <p class="totalItem">Total de Itens: <b>{{this.listaDados !== undefined ? this.listaDados!.length : 0}}</b></p>
-      <div class="destino">
-        <po-combo p-label="Técnico Destino" [ngModel]="codTecnicoDest" p-icon="bi bi-person-workspace"
+      <p class="totalItem">Total de Itens: <b>{{this.qtTotal}}</b></p>
+      <div class="destino"><span>Destino: &nbsp; </span>
+        <po-combo [ngModel]="codTecnicoDest" p-icon="bi bi-person-workspace"
           [(ngModel)]="codTecnicoDest" style="min-width: 350px;" [p-options]="listaTecnicos" [p-placeholder]="loadTecnico"
           [p-clean]="true">
           <ng-template p-combo-option-template let-option>
@@ -79,9 +80,9 @@
           </ng-template>
         </po-combo>
         <po-button p-icon="bi bi-check2-all" p-label="Executar Troca" (p-click)="onExecutar()" p-kind="primary"
-          style="margin-top: 24px;"></po-button>
+        ></po-button>
       </div>
-      <p class="totalItem">Selecionados: <b> {{this.grid2.getSelectedRows()!.length}}</b></p>
+      <p class="totalItem" style="background-color: var(--color-09); color: white;">Empréstimos: <b> {{this.qtEmprestimos}}</b></p>
     </div>
     }
 </div>
@@ -93,6 +94,6 @@
                               [p-primary-action]="acaoAlterarOrdem" 
                               [p-secondary-action]="acaoCancelarOrdem">
       <form [formGroup]="formTroca">
-        <div class="po-md-6"><po-number name="qt-troca" formControlName="qt-troca" p-label="Quantidade" p-step="1"></po-number></div>
+        <div class="po-md-6"><po-number name="qt-troca" formControlName="qt-troca" p-label="Quantidade" p-step="1" [p-min]="0"></po-number></div>
       </form>
   </po-modal>

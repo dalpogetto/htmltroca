@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject, map, of, take, tap } from 'rxjs';
 import { Observable } from 'rxjs';
 import { PoTableColumn } from '@po-ui/ng-components';
 import { environment } from '../environments/environment'
 import { IMonitor } from './imonitor';
+import { Usuario } from '../interfaces/usuario';
+import { Monitor } from '../interfaces/monitor';
 
 //--- Header somente para DEV
 const headersTotvs = new HttpHeaders(environment.totvs_header)
@@ -15,9 +17,15 @@ const headersTotvs = new HttpHeaders(environment.totvs_header)
 export class ServerTotvsService {
   private reg!:any;
   _url = environment.totvs_url;
+  usuarioSelecionado: WritableSignal<Usuario> = signal({
+    codUsuario: '',
+    codEstabelecimento: '',
+    nrProcesso: '',
+  });
 
   constructor(private http: HttpClient ) { }
 
+  public UsuarioLogado!: Usuario;
   public monitorLogado!: IMonitor | undefined;
 
   //---------------------- Variaveis Globais
@@ -26,9 +34,36 @@ export class ServerTotvsService {
                    .pipe(take(1));
   }
 
+  public ObterUsuario(): Observable<Usuario> {
+    return of(this.UsuarioLogado).pipe(take(1));
+  }
+
+  public SetarUsuario(estab: string, usuario: string, processo: string) {
+    this.UsuarioLogado = {
+      codEstabelecimento: estab,
+      codUsuario: usuario,
+      nrProcesso: processo,
+    };
+  }
+
+  public SetarMonitor(monitor?: Monitor) {
+    this.monitorLogado = monitor ?? undefined;
+  }
+
   //Chama tela do TOTVS
   public AbrirTelaTOTVS(params?:any){
     return this.http.get('/totvs-menu/rest/exec', { params, headers: headersTotvs }).pipe(take(1));
+  }
+
+  obterColunasItensNota():Array<PoTableColumn>{
+    return[
+    { property: 'seq', label: 'Seq' },
+    { property: 'it-codigo', label: 'Item' },
+    { property: 'desc-item', label: 'Descrição' },
+    { property: 'qtde', label: 'Qtde' },
+    { property: 'cod-depos', label: 'Depos' },
+    { property: 'cod-localiz', label: 'Localiz' },
+  ];
   }
   
   //------------ Colunas Grid Prioridade
@@ -36,7 +71,6 @@ export class ServerTotvsService {
     return [
       { property: 'situacao', label:'Situação', type:'template'},
       { property: 'nro-docto',    label: "Documento", },
-      { property: 'serie',     label: "Série"},
       { property: 'nat-operacao',     label: "Nat.Oper"},
       { property: 'it-codigo',    label: "Item"},
       { property: 'desc-item',      label: "Descrição", width:'200px'},
@@ -51,22 +85,10 @@ export class ServerTotvsService {
   obterColunasMonitor(): Array<PoTableColumn> {
     return [
       {
-        property: 'situacao',
+        property: 'sit-nota',
         label: 'Situação',
         type: 'label',
         labels: [
-          {
-            value: 'I',
-            color: 'color-08',
-            label: 'Impresso',
-            textColor: 'white',
-          },
-          {
-            value: 'B',
-            color: 'color-03',
-            label: 'Embalagem',
-            textColor: 'white',
-          },
           {
             value: 'E',
             color: 'color-09',
@@ -80,22 +102,19 @@ export class ServerTotvsService {
             textColor: 'white',
           },
           {
-            value: 'R',
+            value: 'X',
             color: 'color-01',
-            label: 'Reparo',
+            label: 'Encerradas',
             textColor: 'white',
-          },
-          {
-            value: 'L',
-            color: 'color-07',
-            label: 'Resumo Final',
-            textColor: 'white',
-          },
+          }
         ],
       },
-      { property: 'nr-process', label: 'Processo' },
-      { property: 'cod-emitente', label: 'Técnico' },
-      { property: 'nome-abrev', label: 'Nome' },
+      { property: 'id', label: 'Transação' },
+      { property: 'cod-emit-ori', label: 'Téc.Origem' },
+      { property: 'nome-abrev-ori', label: 'Nome' },
+      { property: 'cod-emit-dest', label: 'Téc.Destino' },
+      { property: 'nome-abrev-dest', label: 'Nome' },
+      { property: 'num-ped-exec', label: 'Ped.Execução' },
       { property: 'opcoes', label: 'Ações Disponíveis', type: 'cellTemplate' },
     ];
   }
@@ -387,6 +406,10 @@ export class ServerTotvsService {
     ];
   }
 
+  public ObterUsuarioAmbiente() {
+    return this.usuarioSelecionado;
+  }
+
 
   
 
@@ -417,8 +440,8 @@ export class ServerTotvsService {
                    .pipe(take(1));
   }
 
-  public ExecutarTroca(params?: any){
-    return this.http.post(`${this._url}/ExecutarTroca`, params, { headers:headersTotvs})
+  public ExecutarEmprestimo(params?: any){
+    return this.http.post(`${this._url}/ExecutarEmprestimo`, params, { headers:headersTotvs})
                    .pipe(take(1));
   }
 
@@ -459,6 +482,20 @@ export class ServerTotvsService {
       .post(`${this._url}/ReprocessarCalculo`, params, {
         headers: headersTotvs,
       })
+      .pipe(take(1));
+  }
+  public ObterItensNota(params?: any) {
+    return this.http
+      .get(`${this._url}/ObterItensNota`, {
+        params,
+        headers: headersTotvs,
+      })
+      .pipe(take(1));
+  }
+
+  public ReprocessarErros(params?: any) {
+    return this.http
+      .post(`${this._url}/ReprocessarErros`, params, { headers: headersTotvs })
       .pipe(take(1));
   }
 

@@ -1,11 +1,12 @@
 import { Component, inject, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { PoAccordionComponent, PoAccordionItemComponent, PoDialogService, PoModalAction, PoModalComponent, PoNotificationService, PoTableAction, PoTableColumn, PoLoadingModule, PoButtonModule, PoTooltipModule, PoAccordionModule, PoWidgetModule, PoTableModule, PoModalModule } from '@po-ui/ng-components';
+import { PoAccordionComponent, PoAccordionItemComponent, PoDialogService, PoModalAction, PoModalComponent, PoNotificationService, PoTableAction, PoTableColumn, PoLoadingModule, PoButtonModule, PoTooltipModule, PoAccordionModule, PoWidgetModule, PoTableModule, PoModalModule, PoTableRowTemplateDirective } from '@po-ui/ng-components';
 import { Subscription, delay, interval } from 'rxjs';
+import { Usuario } from '../interfaces/usuario';
 import { environment } from '../environments/environment';
+import { BtnDownloadComponent } from '../btn-download/btn-download.component';
 import { NgIf, UpperCasePipe } from '@angular/common';
 import { ServerTotvsService } from '../services/server-totvs.service';
-import { BtnDownloadComponent } from '../btn-download/btn-download.component';
 
 @Component({
     selector: 'app-dashboard',
@@ -14,15 +15,19 @@ import { BtnDownloadComponent } from '../btn-download/btn-download.component';
     standalone: true,
     imports: [
         NgIf,
-        BtnDownloadComponent,
         PoLoadingModule,
         PoButtonModule,
         PoTooltipModule,
         PoAccordionModule,
         PoWidgetModule,
         PoTableModule,
+        BtnDownloadComponent,
         PoModalModule,
         UpperCasePipe,
+        
+        
+        
+        
     ],
 })
 export class DashboardComponent {
@@ -47,6 +52,8 @@ export class DashboardComponent {
   tabNFE: boolean = true;
   codEstabel: string = '';
   codUsuario: string = '';
+  rowItem:any=[]
+  loadGrid=false
 
   //Progress Counter
   percNFE = 0
@@ -79,14 +86,23 @@ export class DashboardComponent {
   listaTecnicos!: any[];
 
   //---Grids de Notas
-  colunasNFS!: PoTableColumn[];
-  colunasNFE!: PoTableColumn[];
-  colunasErro!: PoTableColumn[];
-  listaNFS!: any[];
-  listaNFE!: any[];
-  listaErros!: any[];
+  colunasNFS!: PoTableColumn[]
+  colunasNFE!: PoTableColumn[]
+  colunasErro!: PoTableColumn[]
+  colunasItensNota!:PoTableColumn[]
+  listaNFS!: any[]
+  listaNFE!: any[]
+  listaErros!: any[]
+  listaItems!:any[]
   sub!: Subscription;
   urlSpool:string=''
+  alturaGridLog:number=window.innerHeight - 355
+  alturaGridEntra:number=window.innerHeight - 305
+  alturaGridSai:number=window.innerHeight - 385
+
+  mostrarDetalhe(row:any, index: number) {
+    return true;
+  }
 
   acaoLogin: PoModalAction = {
     action: () => {
@@ -95,12 +111,7 @@ export class DashboardComponent {
     label: 'Selecionar',
   };
 
-  acaoImprimir: PoModalAction = {
-    action: () => {
-      
-    },
-    label: 'Gerar PDF',
-  };
+ 
 
   acaoSair: PoModalAction = {
     action: () => {
@@ -109,29 +120,62 @@ export class DashboardComponent {
     label: 'Sair',
   };
 
-  readonly acoesGridErro: PoTableAction[] = [
-    {
-      label: '',
-      icon: 'bi bi-folder2-open',
-      type:'danger',
-      
-      
-    },
-  ];
+  
+  ObterItensNFE(obj:any){
+    this.loadGrid=true
+    this.listaItems=[]
+    let params: any = {tipo: 'E', chave: `${obj['serie-docto']};${obj['nro-docto']};${obj['cod-emitente']};${obj['nat-operacao']}`};
+    this.srvTotvs.ObterItensNota(params).subscribe({
+      next:(response:any)=>{
+        this.listaItems = response.itemsNota;
+        this.loadGrid=false
+      }
+    })
+  }
+
+  ObterItensNFS(obj:any){
+    this.loadGrid=true
+    this.listaItems=[]
+    let params: any = {tipo: 'S', chave: `${obj['cod-estabel']};${obj['serie']};${obj['nr-nota-fis']}`};
+    this.srvTotvs.ObterItensNota(params).subscribe({
+      next:(response:any)=>{
+        this.listaItems = response.itemsNota;
+        this.loadGrid=false
+      }
+    })
+
+  }
+   
 
   ngOnInit(): void {
 
     this.esconderPainel();
     //--- Informacoes iniciais tela
+   // this.srvTotvs.EmitirParametros({ tituloTela: 'HTMLA41 - DASHBOARD DE NOTAS FISCAIS'});
     this.urlSpool = environment.totvs_spool
 
     //Colunas grids
     this.colunasNFE = this.srvTotvs.obterColunasEntradas();
     this.colunasNFS = this.srvTotvs.obterColunasSaidas();
     this.colunasErro = this.srvTotvs.obterColunasErrosProcessamento();
+    this.colunasItensNota = this.srvTotvs.obterColunasItensNota()
 
-    this.verificarNotas()
-
+    //Login Unico
+    this.srvTotvs.ObterUsuario().subscribe({
+      next:(response:Usuario)=>{
+        
+        if (response === undefined){
+          this.LogarUsuario()
+        }
+        else{
+          this.codEstabel = response.codEstabelecimento
+          this.codUsuario = response.codUsuario
+          this.nrProcess  = response.nrProcesso
+          this.usuarioLogado = true
+          this.verificarNotas()
+       }
+      }
+    })
   }
 
 onForcarEfetivarProcesso(){
@@ -190,6 +234,11 @@ verificarNotas() {
             else
               x.label = `Logs do Processo (${response.erros.length})`
           })
+
+          //Calculo Progress Bar
+          //this.percNFE = (this.listaNFE.filter(x=> x["idi-sit"] === 100).length * 100) / this.listaNFE.length
+          //this.percNFS = (this.listaNFS.filter(x=> x["idi-sit"] === 3).length * 100) / this.listaNFS.length
+
 
           this.rpwStatus = response.rpw;
           this.listaErros = response.erros;
@@ -253,6 +302,7 @@ verificarNotas() {
 
         this.srvTotvs.ReprocessarCalculo(params).subscribe({
           next: (response: any) => {
+           
             this.srvNotification.success('Execução do cálculo realizada com sucesso ! Processo RPW: ' + response.rpw)
 
             setTimeout(() => {
@@ -292,5 +342,9 @@ verificarNotas() {
     if (elemento === null) return;
     elemento.style.display = 'none';
   }
+
+
+ 
+ 
 
 }

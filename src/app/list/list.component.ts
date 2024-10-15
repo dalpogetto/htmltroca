@@ -60,6 +60,9 @@ export class ListComponent {
 
   //lista: any;
   tipoAcao:string=''
+  qtEmprestimos:number=0
+  qtTotal:number=0
+  alturaGrid:number=window.innerHeight - 355
   
   //---Grid
   colunas!: PoTableColumn[]
@@ -146,6 +149,7 @@ export class ListComponent {
           this.listaDados=[]
         else
           this.listaDados = response.items.sort(this.srvTotvs.ordenarCampos(['nro-docto', 'it-codigo']))
+        this.listaDados.forEach(o=> this.qtTotal += o['qt-nota'])
         this.loadTela=false
       },
       error: (e) => { this.loadTela=false},
@@ -162,7 +166,7 @@ export class ListComponent {
       return
     } 
 
-    if (this.grid2?.getSelectedRows().length === 0) {
+    if (!this.temTroca) {
       this.srvNotification.error('Selecione ao menos um item para a troca !')
       return
     }
@@ -182,9 +186,9 @@ export class ListComponent {
       literals: { cancel: 'Não', confirm: 'Sim' },
       confirm: () => {
         this.loadTela = false;
-        let params: any = { codEstabel: this.codEstabel, codTecnico:this.codTecnicoOri, codTecnicoDestino: this.codTecnicoDest, items: this.grid2?.items};
+        let params: any = { cabec:{"cod-estabel": this.codEstabel, "cod-tec-ori":this.codTecnicoOri, "cod-tec-dest": this.codTecnicoDest}, items: this.listaDados.filter(o=>o['qt-troca']!==null)};
         console.log(params)
-        /* this.srvTotvs.ExecutarTroca(params).subscribe({
+         this.srvTotvs.ExecutarEmprestimo(params).subscribe({
           next: (response: any) => {
             this.loadTela = false;
             this.srvNotification.success('Registro alterado com sucesso !');
@@ -192,7 +196,7 @@ export class ListComponent {
           error: (e) => {
             this.loadTela = false;
           },
-        }); */
+        }); 
       },
       cancel: () => {},
     });
@@ -204,7 +208,19 @@ export class ListComponent {
     this.telaTroca?.open()
   }
 
+  onCancelarQuantidade(obj:any){
+    this.objSelecionado = obj
+    this.formTroca.controls['qt-troca'].setValue(0)
+    this.alterarOrdem()
+  }
+
   alterarOrdem(){
+   // console.log(Number(this.formTroca.controls['qt-troca'].value) )
+  //  console.log()
+    if (Number(this.formTroca.controls['qt-troca'].value) > this.objSelecionado['qt-nota']){
+      this.srvNotification.error('Empréstimo deve ser menor que quantidade da nota fiscal !')
+      return
+    }
     this.temTroca=false
     let registro = {...this.objSelecionado, "qt-troca": Number(this.formTroca.controls['qt-troca'].value)}
     this.grid2?.updateItem(this.objSelecionado, registro)
@@ -214,13 +230,13 @@ export class ListComponent {
     if (Number(this.formTroca.controls['qt-troca'].value) === 0){
       let trocaNota = this.listaDados.filter(o => o['nro-docto'] === this.objSelecionado['nro-docto'] && o['qt-troca'] > 0).length > 0
 
-    if(!trocaNota){
-          this.listaDados.forEach(o => {
-            if (o["nro-docto"] === this.objSelecionado["nro-docto"]){
-            o["qt-troca"] = null
-            }
-        })
-      }
+      if(!trocaNota){
+            this.listaDados.forEach(o => {
+              if (o["nro-docto"] === this.objSelecionado["nro-docto"]){
+              o["qt-troca"] = null
+              }
+          })
+        }
     }
 
     //Verificar se existe troca para mostrar o selecao de emitente de destino
@@ -228,9 +244,19 @@ export class ListComponent {
       this.listaDados.forEach(o => {
         if (o["nro-docto"] === this.objSelecionado["nro-docto"] && o["qt-troca"] === null)
           o["qt-troca"] = 0
-          this.temTroca=true
+        
       })
     }
+
+    //Verifica se existe alguma troca
+    this.temTroca = false
+    this.qtEmprestimos = 0
+    this.listaDados.forEach(o => {
+      if (o['qt-troca'] > 0){
+        this.temTroca = true
+        this.qtEmprestimos += o['qt-troca']
+      }
+    })
 
     this.telaTroca?.close()
   }

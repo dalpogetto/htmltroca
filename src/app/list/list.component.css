@@ -10,6 +10,7 @@
     display: flex; 
     justify-content:space-around; 
     align-items: center;
+    margin-top: 5px;
     
 }
 
@@ -40,8 +41,7 @@
     display: flex; 
     justify-content: center; 
     align-items: center; 
-    margin-top: 10px; 
-    gap:20px;
+    gap:10px;
     background-color: #D7F0FE; 
     border:1px solid gray;
     border-radius: 4px; 
