@@ -108,11 +108,8 @@ public onListar(){
       console.log("Lista", response)
       this.lista =[]
       this.lista = (response.items as any[]).sort(this.srvTotvs.ordenarCampos(['nr-process']));
-      this.labelContador[0] = this.lista.filter(o=> o.situacao === 'E').length.toString()
-      this.labelContador[1] = this.lista.filter(o=> o.situacao === 'S').length.toString()
-      this.labelContador[2] = this.lista.filter(o=> o.situacao === 'R').length.toString()
-      this.labelContador[3] = this.lista.filter(o=> o.situacao === 'B').length.toString()
-      this.labelContador[4] = this.lista.filter(o=> o.situacao === 'L').length.toString()
+      this.labelContador[0] = this.lista.filter(o=> o['sit-nota'] === 'E').length.toString()
+      this.labelContador[1] = this.lista.filter(o=> o['sit-nota'] === 'S').length.toString()
       this.srvTotvs.SetarMonitor({listaEstab: this.listaEstabelecimentos, listaGrid: this.lista, estabSelecionado: this.codEstabel})
       this.loadTela = false
     },
@@ -154,9 +151,9 @@ Reparos(obj:any){
 AbrirTela(obj:any, cTela:string){
   this.loadTela=true
   //Setar Estabelecimento e Usuario utilizado no calculo
-  this.srvTotvs.SetarUsuario(obj["cod-estabel"], obj["cod-emitente"], obj["nr-process"])
+  this.srvTotvs.SetarUsuario(obj["cod-estabel"], obj["cod-emit-ori"], obj["nr-process"])
    //Parametros da Nota
-   let paramsTec: any = {codEstabel: obj["cod-estabel"], codTecnico: obj["cod-emitente"]};
+   let paramsTec: any = {codEstabel: obj["cod-estabel"], codTecnico: obj["cod-emit-ori"]};
   //Chamar Método
  this.srvTotvs.ObterNrProcesso(paramsTec).subscribe({
     next: (response: any) => {

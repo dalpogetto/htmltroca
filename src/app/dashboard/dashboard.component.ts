@@ -96,9 +96,9 @@ export class DashboardComponent {
   listaItems!:any[]
   sub!: Subscription;
   urlSpool:string=''
-  alturaGridLog:number=window.innerHeight - 355
-  alturaGridEntra:number=window.innerHeight - 305
-  alturaGridSai:number=window.innerHeight - 385
+  alturaGridLog:number=window.innerHeight - 370
+  alturaGridEntra:number=window.innerHeight - 320
+  alturaGridSai:number=window.innerHeight - 400
 
   mostrarDetalhe(row:any, index: number) {
     return true;
@@ -211,6 +211,8 @@ LogarUsuario() {
 }
   
 verificarNotas() {
+
+  console.log("Verificar Notas")
     
     if (!this.usuarioLogado) {
       this.loginModal?.open();

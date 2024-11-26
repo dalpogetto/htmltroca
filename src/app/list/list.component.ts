@@ -15,7 +15,6 @@ import { environment } from '../environments/environment'
   standalone: true,
   imports: [
     CommonModule,
-    RouterOutlet,
     ReactiveFormsModule,
     FormsModule,
     PoModalModule,
@@ -145,11 +144,19 @@ export class ListComponent {
     //Chamar servico
     this.srvTotvs.ObterSaldoTerceiro(param).subscribe({
       next: (response: any) => {
-        if (response === null)
+        if (response === null){
           this.listaDados=[]
+          this.srvDialog.alert({
+            title: 'ATENÇÃO ! VERIFIQUE O MONITOR DE NOTAS FISCAIS !',
+            message: 'PARA REALIZAR UM NOVO EMPRÉSTIMO UTILIZANDO ESTE TÉCNICO, AGUARDE A CONCLUSÃO DO PROCESSO ANTERIOR ! ',
+            ok: () => (true)
+          });
+        }
         else
+        {
           this.listaDados = response.items.sort(this.srvTotvs.ordenarCampos(['nro-docto', 'it-codigo']))
-        this.listaDados.forEach(o=> this.qtTotal += o['qt-nota'])
+          this.listaDados.forEach(o=> this.qtTotal += o['qt-nota'])
+        }
         this.loadTela=false
       },
       error: (e) => { this.loadTela=false},
@@ -185,13 +192,14 @@ export class ListComponent {
       
       literals: { cancel: 'Não', confirm: 'Sim' },
       confirm: () => {
-        this.loadTela = false;
+        this.loadTela = true;
         let params: any = { cabec:{"cod-estabel": this.codEstabel, "cod-tec-ori":this.codTecnicoOri, "cod-tec-dest": this.codTecnicoDest}, items: this.listaDados.filter(o=>o['qt-troca']!==null)};
-        console.log(params)
          this.srvTotvs.ExecutarEmprestimo(params).subscribe({
           next: (response: any) => {
-            this.loadTela = false;
+            this.loadTela = false
             this.srvNotification.success('Execução do empréstimo realizada com sucesso ! Processo RPW: ' + response.rpw)
+            this.temTroca = false
+            this.onSelecionar()
           },
           error: (e) => {
             this.loadTela = false;

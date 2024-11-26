@@ -1,0 +1,7 @@
+.cabec{
+    display: flex; 
+    gap:5px;
+    justify-content:start; 
+    align-items: center; 
+    margin-bottom: 10px;
+}

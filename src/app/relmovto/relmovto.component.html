@@ -1,1 +1,105 @@
-<p>relmovto works!</p>
+<po-loading-overlay *ngIf="loadTela===true" [p-screen-lock]="true"></po-loading-overlay>
+
+<div class="cabec">
+   
+      <po-button p-icon="bi bi-gear" (p-click)="this.telaSelecao?.open()" style="margin-top: 24px;"></po-button>
+      <po-button p-icon="bi bi-check2-circle" p-label="Buscar" (p-click)="this.Selecionar()" style="margin-top: 24px;"></po-button>
+      <po-button p-icon="bi bi-printer" p-label="Gerar Excel" (p-click)="this.GerarExcel()" p-kind="primary" style="margin-top: 24px;"></po-button>
+  </div>
+
+
+<div class="grid">
+  <po-table #grid2  [p-items]="lista"
+                   [p-columns]="colunas" 
+                   [p-striped]="true" 
+                   p-sort="true" 
+                   [p-hide-table-search]="false" 
+                   [p-hide-columns-manager]="true" 
+                   p-container="true" 
+                   [p-sort]="true"
+                   [p-height]="alturaGrid" >
+          
+  </po-table>
+
+  
+</div>
+
+<po-modal #telaSelecao p-title="Parâmetros de Seleção"
+                              p-size="auto" 
+                              p-click-out="false" 
+                              [p-hide-close]="true"
+                              [p-primary-action]="acaoSelecionar" 
+                              [p-secondary-action]="acaoCancelarSelecao">
+
+
+      <form #formSelecao="ngForm">
+        <div class="po-row">
+            <po-datepicker
+            class="po-md-6"
+            name="dtInicial"
+            [(ngModel)]="dtIni"
+            p-clean
+            p-format="dd/mm/yyyy"
+            p-label="Data Inicial"
+            p-required
+            [p-max-date]="dtIni"
+            >
+            </po-datepicker>
+
+            <po-datepicker
+            class="po-md-6"
+            name="dtFinal"
+            [(ngModel)]="dtFim"
+            p-clean
+            p-format="dd/mm/yyyy"
+            p-label="Data Final"
+            p-required
+            [p-min-date]="dtFim"
+            >
+            </po-datepicker>
+        </div>
+
+        <div class="po-row">
+            <po-input
+            class="po-md-6"
+            name="tecIni"
+            [(ngModel)]="tecIni"
+            p-placeholder="Técnico Inicial"
+            p-label="Técnico Origem Inicial"
+            p-required
+            >
+            </po-input>
+
+            <po-input
+            class="po-md-6"
+            name="tecFinal"
+            [(ngModel)]="tecFim"
+            p-label="Técnico Origem Final"
+            p-placeholder="Técnico Final"
+            p-required
+            >
+            </po-input>
+        </div>
+
+        <div class="po-row">
+            <po-input
+            class="po-md-6"
+            name="tecDestIni"
+            [(ngModel)]="tecIni"
+            p-label="Técnico Destino Inicial"
+            p-required
+            >
+            </po-input>
+
+            <po-input
+            class="po-md-6"
+            name="tecDestFinal"
+            [(ngModel)]="tecFim"
+            p-placeholder="Técnico Final"
+            p-label="Técnico Destino Final"
+            p-required
+            >
+            </po-input>
+        </div>
+        </form>
+  </po-modal>

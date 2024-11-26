@@ -109,7 +109,7 @@ export class ServerTotvsService {
           }
         ],
       },
-      { property: 'id', label: 'Transação' },
+      { property: 'nr-process', label: 'Transação' },
       { property: 'cod-emit-ori', label: 'Téc.Origem' },
       { property: 'nome-abrev-ori', label: 'Nome' },
       { property: 'cod-emit-dest', label: 'Téc.Destino' },
@@ -118,6 +118,19 @@ export class ServerTotvsService {
       { property: 'opcoes', label: 'Ações Disponíveis', type: 'cellTemplate' },
     ];
   }
+
+  obterColunasRelatorio(): Array<PoTableColumn> {
+    return [
+      { property: 'nr-process', label: 'Transação' },
+      { property: 'cod-emit-ori', label: 'Téc.Origem' },
+      { property: 'nome-abrev-ori', label: 'Nome' },
+      { property: 'cod-emit-dest', label: 'Téc.Destino' },
+      { property: 'nome-abrev-dest', label: 'Nome' },
+      { property: 'it-codigo', label: 'Item' },
+      { property: 'desc-item', label: 'Descrição' },
+      { property: 'quantidade', label: 'Qtde' },
+
+    ]}
 
   
   obterColunasEntradas(): Array<PoTableColumn> {
@@ -442,6 +455,11 @@ export class ServerTotvsService {
 
   public ExecutarEmprestimo(params?: any){
     return this.http.post(`${this._url}/ExecutarEmprestimo`, params, { headers:headersTotvs})
+                   .pipe(take(1));
+  }
+
+  public ObterDadosRelatorio(params?: any){
+    return this.http.post(`${this._url}/ObterDadosRelatorio`, params, { headers:headersTotvs})
                    .pipe(take(1));
   }
 

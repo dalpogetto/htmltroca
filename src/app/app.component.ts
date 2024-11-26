@@ -38,7 +38,7 @@ export class AppComponent {
       shortLabel: 'Emprestimo',
     },
     {
-      label: 'Monitor',
+      label: 'Monitor Notas',
       icon: 'bi bi-display',
       link: '/monitor',
       shortLabel: 'Monitor',
