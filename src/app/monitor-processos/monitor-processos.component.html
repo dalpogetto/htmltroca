@@ -38,36 +38,12 @@
                         <div class="po-font-text-smaller">{{ row['fase']}}</div>  
                     </div>
                 }
-                @else {
-                    @if(row['situacao'] === 'B'){ 
-                        <div class='po-font-text' style="display: flex;justify-content: center; color:white; background-color: var(--color-03);border-radius: 50%; padding: 1px;text-align: center">
-                            {{ row['situacao']}}
-                        </div>
-                    }
-                    @else if(row['situacao'] === 'S'){ 
-                        <div class='po-font-text' style="display: flex;justify-content: center; color:white; background-color: var(--color-10);border-radius: 50%; padding: 1px;text-align: center">
-                            {{ row['situacao']}}
-                        </div>
-                    }
-                    @else if(row['situacao'] === 'R'){ 
-                        <div class='po-font-text' style="display: flex;justify-content: center; color:white; background-color: var(--color-01);border-radius: 50%; padding: 1px;text-align: center">
-                            {{ row['situacao']}}
-                        </div>
-                    }
-                    @else if(row['situacao'] === 'L'){ 
-                        <div class='po-font-text' style="display: flex;justify-content: center; color:white; background-color: var(--color-07);border-radius: 50%; padding: 1px;text-align: center">
-                            {{ row['situacao']}}
-                        </div>
-                    }
-                }
-            }
-           <!--  @if(column.property === 'fase'){
-                @if(row['situacao'] === 'E'){
-                    <div style="display: flex; justify-content: center; align-items:end">
-                        <div class="po-font-text-smaller" class="po-font-text-smaller" style="color:white; background-color: var(--color-09);border: 1px solid var(--color-09); border-radius: 4px; padding: 1px;text-align: center">{{ row['fase']}}</div>  
+                @else if(row['situacao'] === 'S'){ 
+                    <div class='po-font-text' style="display: flex;justify-content: center; color:white; background-color: var(--color-10);border-radius: 50%; padding: 1px;text-align: center">
+                        {{ row['situacao']}}
                     </div>
                 }
-            } -->
+            }
             @if(column.property === 'num-ped-exec'){
                
                 <div style="display: flex; align-items: center; gap:5px;padding: 1px;border-radius: 4px;">
@@ -89,10 +65,6 @@
             @if(column.property === 'opcoes'){
                 <div class="menuGrid">
                     <div><button class="btn"  (click)="NotasFiscais(row)"><p><i class="bi bi-archive"></i> Notas Fiscais</p></button></div>
-                    <div [ngClass]="row.situacao === 'R' ? 'show' : 'hide'"><button class="btn"  (click)="Reparos(row)"><p><i class="bi bi-tools"></i> Reparos</p></button></div>
-                    <div [ngClass]="row.situacao === 'B' ? 'show' : 'hide'"><button class="btn"  (click)="Embalagem(row)"><p><i class="bi bi-box2"></i> Embalagem</p></button></div>
-                    <div [ngClass]="row.situacao === 'L' ? 'show' : 'hide'"><button class="btn"  (click)="ResumoFinal(row)"><p><i class="bi bi-printer"></i> Resumo Final</p></button></div>
-                 <!--    <div><button class="btn" style="background-color: lightcoral ; color:black; border: 1px solid black"  (click)="onReprocessarNotas(row)"><p><i class="bi bi-calendar2-check"></i> Reprocessar Notas</p></button></div> -->
                 </div>
             }
           </ng-template>
@@ -108,22 +80,6 @@
         <div class="po-font-text-smaller" style="color:white; background-color: var(--color-10);border: 1px solid var(--color-10); border-radius: 4px; padding: 1px;min-width: 30px; text-align: center;box-shadow: 2px 5px 5px lightgray;">{{ this.labelContador[1]}}</div>
         <div style="color:var(--color-10)">Saídas</div>
     </div>
-
-    <div style="display: flex; align-items: center;gap:5px;padding: 5px;border-radius: 4px; min-width: 150px;">
-        <div class="po-font-text-smaller" style="color:white; background-color: var(--color-01);border: 1px solid var(--color-01); border-radius: 4px; padding: 1px;min-width: 30px; text-align: center;box-shadow: 2px 5px 5px lightgray;">{{ this.labelContador[2]}}</div>
-        <div style="color:var(--color-01)">Reparos</div>
-    </div>
-    
-    <div style="display: flex; align-items: center;gap:5px;padding: 5px;border-radius: 4px; min-width: 150px;">
-        <div class="po-font-text-smaller" style="color:white; background-color: var(--color-03);border: 1px solid var(--color-03); border-radius: 4px; padding: 1px;min-width: 30px; text-align: center;box-shadow: 2px 5px 5px lightgray;">{{ this.labelContador[3]}}</div>
-        <div style="color:var(--color-03)">Embalagem</div>
-    </div>
-
-    <div style="display: flex; align-items: center;gap:5px;padding: 5px;border-radius: 4px; min-width: 150px">
-        <div class="po-font-text-smaller" style="color:white; background-color: var(--color-07);border: 1px solid var(--color-07); border-radius: 4px; padding: 1px;min-width: 30px; text-align: center;box-shadow: 2px 5px 5px lightgray;">{{ this.labelContador[4]}}</div>
-        <div style="color:var(--color-07)">Resumo Final</div>
-    </div>
-
 </div>
 </div>
 

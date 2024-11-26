@@ -43,6 +43,12 @@ export class AppComponent {
       link: '/monitor',
       shortLabel: 'Monitor',
     },
+    {
+      label: 'Relatório',
+      icon: 'bi bi-printer',
+      link: '/relmovto',
+      shortLabel: 'RelMovto',
+    },
   ];
 
   //Variaveis 

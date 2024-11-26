@@ -191,7 +191,7 @@ export class ListComponent {
          this.srvTotvs.ExecutarEmprestimo(params).subscribe({
           next: (response: any) => {
             this.loadTela = false;
-            this.srvNotification.success('Registro alterado com sucesso !');
+            this.srvNotification.success('Execução do empréstimo realizada com sucesso ! Processo RPW: ' + response.rpw)
           },
           error: (e) => {
             this.loadTela = false;

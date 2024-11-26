@@ -5,7 +5,8 @@ export const routes: Routes = [
 
     {path: '', redirectTo: '/list', pathMatch: 'full'},
     {path:'list', loadComponent:()=> import('../app/list/list.component').then(c=>c.ListComponent)},
-    {path:'monitor', loadComponent:()=> import('../app/monitor-processos/monitor-processos.component').then(c=>c.MonitorProcessosComponent)}
+    {path:'monitor', loadComponent:()=> import('../app/monitor-processos/monitor-processos.component').then(c=>c.MonitorProcessosComponent)},
+    {path:'relmovto', loadComponent:()=> import('../app/relmovto/relmovto.component').then(c=>c.RelmovtoComponent)}
 
 ];
 
