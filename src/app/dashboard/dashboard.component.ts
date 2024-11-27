@@ -182,6 +182,47 @@ export class DashboardComponent {
    
   }
 
+  onReenviarNotasSefaz(){
+    if (this.cRPW.toUpperCase().includes('EXECUTANDO / EXECUTANDO PEDIDO') || this.cRPW.toUpperCase().includes('NÃO EXECUTADO')){
+      this.srvNotification.error('Não é permitido o Reenvio de Notas com RPW em execução !')
+      return
+    }
+  
+    this.srvDialog.confirm({
+      title: 'REENVIAR NOTAS SEFAZ',
+      message:
+      "<div class='dlg'><i class='bi bi-question-circle po-font-subtitle'></i><span class='po-font-text-large'> CONFIRMA REENVIO DE NOTAS PENDENTES?</span></div><p>Serão reenviadas as notas que estão aguardando autorização do SEFAZ.</p>",
+  
+      confirm: () => {
+        this.loadTela = true;
+        let params: any = {
+            codEstabel: this.codEstabel,
+            nrProcess: this.nrProcess
+        };
+  
+        this.srvTotvs.ReenviarNotasSefaz(params).subscribe({
+          next: (response: any) => {
+            if (response.numPedExec === 0)
+               this.srvNotification.error('Não existem notas pendentes para atualizar no SEFAZ')
+            else{
+               this.srvNotification.success('Reenvio de Notas executado. Criado pedido de execução: ' + response.numPedExec)
+               this.verificarNotas()
+            }
+  
+            this.loadTela = false;
+          },
+          error: (e) => {
+           
+            this.loadTela = false;
+          },
+        });
+      },
+      cancel: () => this.srvNotification.error('Cancelada pelo usuário'),
+    });
+  
+  }
+  
+
 onForcarEfetivarProcesso(){
   this.srvDialog.confirm({
     title: 'EFETIVAR PROCESSO',

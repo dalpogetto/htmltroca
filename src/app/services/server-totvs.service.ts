@@ -528,6 +528,15 @@ export class ServerTotvsService {
     return this.emissorEvento$.asObservable();
   }
 
+  public ReenviarNotasSefaz(params?: any) {
+    return this.http
+      .get(`${this._url}/ReenviarNotasSefaz`, {
+        params,
+        headers: headersTotvs,
+      })
+      .pipe(take(1));
+  }
+
   
   //Ordenacao campos num array
   public ordenarCampos = (fields: any[]) =>
