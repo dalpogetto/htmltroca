@@ -424,8 +424,6 @@ export class ServerTotvsService {
   }
 
 
-  
-
   public ObterMonitor(monitor?: IMonitor) {
     return this.monitorLogado!;
   }
@@ -517,10 +515,18 @@ export class ServerTotvsService {
       .pipe(take(1));
   }
 
+  //--- Variavel
+  private emissorEvento$ = new Subject<any>();
 
-   
+  //--- Emissor
+  public EmitirParametros(valor: any) {
+    this.emissorEvento$.next(valor);
+  }
 
-
+  //--- Observador
+  public LerParametros() {
+    return this.emissorEvento$.asObservable();
+  }
 
   
   //Ordenacao campos num array

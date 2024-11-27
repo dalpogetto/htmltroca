@@ -1,12 +1,13 @@
 <po-loading-overlay *ngIf="loadTela===true" [p-screen-lock]="true"></po-loading-overlay>
 
-<div class="cabec">
-   
-      <po-button p-icon="bi bi-gear" (p-click)="this.telaSelecao?.open()" style="margin-top: 24px;"></po-button>
-      <po-button p-icon="bi bi-check2-circle" p-label="Buscar" (p-click)="this.Selecionar()" style="margin-top: 24px;"></po-button>
-      <po-button p-icon="bi bi-printer" p-label="Gerar Excel" (p-click)="this.GerarExcel()" p-kind="primary" style="margin-top: 24px;"></po-button>
+<div class="selecao">
+  <div class="cabec">
+    
+        <po-button p-icon="bi bi-calendar-range" (p-click)="this.telaSelecao?.open()" p-tooltip="Seleção de Dados"></po-button>
+        <po-button p-icon="bi bi-check2-circle" p-label="Buscar Dados" (p-click)="this.Selecionar()" ></po-button>
+        <po-button p-icon="bi bi-download" p-label="Download Planilha" (p-click)="this.GerarExcel()" p-kind="primary" ></po-button>
   </div>
-
+</div>
 
 <div class="grid">
   <po-table #grid2  [p-items]="lista"

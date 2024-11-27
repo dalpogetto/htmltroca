@@ -30,6 +30,7 @@ import { ServerTotvsService } from './services/server-totvs.service';
 export class AppComponent {
   private srvTotvs = inject(ServerTotvsService);
   private formBuilder = inject(FormBuilder);
+  private cdRef = inject(ChangeDetectorRef);
   readonly menus: Array<PoMenuItem> = [
     {
       label: 'Empréstimo',
@@ -61,6 +62,17 @@ export class AppComponent {
   opcoes!: PoTableAction[]
   colunas!: PoTableColumn[]
   lista!: any[]
+
+  tecnicoInfo!: string;
+  tecnicoInfoOut!: string;
+  estabInfo!: string;
+  processoInfo!: string;
+  processoSituacao!: string;
+  dashboard: boolean = false;
+  abrirMenu: boolean = false;
+  abrirSeletor: boolean = false;
+
+  private sub!: Subscription;
   
   private onClick() {
     alert('Clicked in menu item');
@@ -69,42 +81,30 @@ export class AppComponent {
 
   ngOnInit(): void {
     
-    //--- Titulo Tela
-    //this.srvTotvs.EmitirParametros({estabInfo:'', tecInfo:'', processoInfo:'', tituloTela: 'HTMLA41 - PARÂMETROS DA FILIAL', dashboard: false})
-
     //Colunas do grid
     this.colunas = this.srvTotvs.obterColunas()
 
-    //Tempo Mensagem
-    //this.srvNotification.setDefaultDuration(3000)
-
-    //Listar no grid
-    //this.listar()
-
-    //Carregar combo de estabelecimentos
-    /*this.srvTotvs.ObterEstabelecimentos().subscribe({
+    this.sub = this.srvTotvs.LerParametros().subscribe({
       next: (response: any) => {
-        this.listaEstabelecimentos = (response as any[]).sort(
-          this.srvTotvs.ordenarCampos(['label']))
-      },
-      error: (e) => {
-        //this.srvNotification.error('Ocorreu um erro na requisição')
-        return
+       
+        this.estabInfo = response.estabInfo ;
+        this.tecnicoInfo = response.tecInfo ?? this.tecnicoInfo;
+        this.tecnicoInfoOut = response.tecInfoOut ?? this.tecnicoInfoOut;
+        this.processoInfo = response.processoInfo ?? this.processoInfo;
+        this.processoSituacao =
+          response.processoSituacao ?? this.processoSituacao;
+        this.tituloTela = response.tituloTela ?? this.tituloTela;
+        this.dashboard = response.dashboard ?? this.dashboard;
+        this.abrirMenu = response.abrirMenu ?? true;
+
+       
+        this.cdRef.detectChanges();
       },
     });
 
-    //Carregar combo transportadoras
-    this.srvTotvs.ObterTransportadoras().subscribe({
-      next: (response: any) => {
-        this.listaTransp = (response as any[]).sort(
-          this.srvTotvs.ordenarCampos(['label'])
-        )
-      },
-     // error: (e) => this.srvNotification.error('Ocorreu um erro na requisição'),
-    })
-*/
+    
     //Aplicar changes na tela
-   //this.cdRef.detectChanges()
+    this.cdRef.detectChanges()
 
   }
 

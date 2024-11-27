@@ -40,6 +40,7 @@ export class RelmovtoComponent {
 
   private srvTotvs = inject(ServerTotvsService)
   private srvExcel = inject(ExcelService)
+  private srvNotification = inject(PoNotificationService);
 
 
   readonly acaoSelecionar: PoModalAction = {
@@ -76,6 +77,8 @@ export class RelmovtoComponent {
 
     //Colunas grids
     this.colunas = this.srvTotvs.obterColunasRelatorio();
+
+    this.srvTotvs.EmitirParametros({ tituloTela: 'EMPRÉSTIMOS - RELATÓRIO MOVIMENTAÇÕES'});
   }
 
   Selecionar(){
@@ -84,10 +87,15 @@ export class RelmovtoComponent {
 
     this.srvTotvs.ObterDadosRelatorio(paramsTela).subscribe({
       next:(response:any)=>{
-        
+        if (response === null){
+          this.srvNotification.warning("Não existe dados para o range de seleção !")
+           return
+        }
         this.lista = response.items;
         this.loadTela=false
-    }})
+    },
+      complete: ()=> {this.loadTela=false}
+    })
 
   }
 

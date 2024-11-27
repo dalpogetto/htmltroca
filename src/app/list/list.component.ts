@@ -101,6 +101,8 @@ export class ListComponent {
 
   ngOnInit(): void {
 
+    this.srvTotvs.EmitirParametros({ tituloTela: 'EMPRÉSTIMOS - MOVIMENTAÇÃO'});
+
     this.loadTela=true
     this.colunas = this.srvTotvs.obterColunas()
     

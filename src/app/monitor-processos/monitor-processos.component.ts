@@ -70,7 +70,7 @@ ngOnInit(): void {
   
 
   this.colunas = this.srvTotvs.obterColunasMonitor()
-  //this.srvTotvs.EmitirParametros({ tituloTela: 'HTMLA41 - MONITOR ACOMPANHAMENTO DE PROCESSOS', estabInfo:''});
+  this.srvTotvs.EmitirParametros({ tituloTela: 'EMPRÉSTIMOS - MONITOR ACOMPANHAMENTO DE PROCESSOS', estabInfo:undefined});
 
   let monitor = this.srvTotvs.ObterMonitor()
   if (monitor !== undefined)
@@ -101,11 +101,13 @@ ngOnInit(): void {
 
 
 public onListar(){
+  this.srvTotvs.EmitirParametros({ tituloTela: 'EMPRÉSTIMOS - MONITOR ACOMPANHAMENTO DE PROCESSOS', estabInfo:undefined});
+ 
   this.loadTela=true;
   let params:any={codEstabel: this.codEstabel}
   this.srvTotvs.ObterProcessosEstab(params).subscribe({
     next: (response:any)=>{
-      console.log("Lista", response)
+      
       this.lista =[]
       this.lista = (response.items as any[]).sort(this.srvTotvs.ordenarCampos(['nr-process']));
       this.labelContador[0] = this.lista.filter(o=> o['sit-nota'] === 'E').length.toString()
@@ -123,6 +125,13 @@ Etiqueta(obj:any){
 }
 
 NotasFiscais(obj:any){
+  let estab = this.listaEstabelecimentos.find((o) => o.value === this.codEstabel);
+  
+  this.srvTotvs.EmitirParametros({tituloTela: 'EMPRÉSTIMOS - DASHBOARD DE NOTAS FISCAIS',
+                                  estabInfo: estab.label, 
+                                  tecInfo: `${obj['cod-emit-ori']} ${obj['nome-abrev-ori']}`,
+                                  tecInfoOut: `${obj['cod-emit-dest']} ${obj['nome-abrev-dest']}`, 
+                                  processoInfo:obj['nr-process']})
   this.AbrirTela(obj, 'dashboard')
 }
 

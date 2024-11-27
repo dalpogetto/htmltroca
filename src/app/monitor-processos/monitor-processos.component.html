@@ -3,7 +3,7 @@
   </div>
 
 <div class="selecao">
-    <div style="width: 45%; margin-left: 40px;">
+    <div style="min-width: 450px; margin-left: 40px;">
         <po-combo [ngModel]="codEstabel" (ngModelChange)="codEstabel = $event" 
             [p-options]="listaEstabelecimentos"  p-icon="bi bi-pin-map"
             [p-placeholder]="placeHolderEstabelecimento" p-clean="true">

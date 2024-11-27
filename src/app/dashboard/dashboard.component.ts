@@ -7,6 +7,7 @@ import { environment } from '../environments/environment';
 import { BtnDownloadComponent } from '../btn-download/btn-download.component';
 import { NgIf, UpperCasePipe } from '@angular/common';
 import { ServerTotvsService } from '../services/server-totvs.service';
+import { ThisReceiver } from '@angular/compiler';
 
 @Component({
     selector: 'app-dashboard',
@@ -151,7 +152,7 @@ export class DashboardComponent {
 
     this.esconderPainel();
     //--- Informacoes iniciais tela
-   // this.srvTotvs.EmitirParametros({ tituloTela: 'HTMLA41 - DASHBOARD DE NOTAS FISCAIS'});
+    //this.srvTotvs.EmitirParametros({ tituloTela: 'EMPRÉSTIMOS - DASHBOARD DE NOTAS FISCAIS'});
     this.urlSpool = environment.totvs_spool
 
     //Colunas grids
@@ -176,6 +177,9 @@ export class DashboardComponent {
        }
       }
     })
+
+   // this.srvTotvs.EmitirParametros({estabInfo: this.codEstabel, tecInfo: this.codUsuario, processoInfo:this.nrProcess, processoSituacao: ''})
+   
   }
 
 onForcarEfetivarProcesso(){
