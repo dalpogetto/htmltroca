@@ -49,7 +49,13 @@
                    [p-height]="alturaGrid" >
           <ng-template p-table-cell-template let-column="column" let-row="row">
            @if(column.property === 'qt-troca' && row['qt-troca'] >= 0){
-            <h4 style="background-color: var(--color-09); color: white; text-align: center;">{{row['qt-troca']}}</h4>
+            @if(row['qt-troca'] > 0){
+              <h4 style="background-color: #D7F0FE; text-align: center;">{{row['qt-troca']}}</h4>
+            }
+            @if(row['qt-troca'] === 0){
+              <h4 style="background-color: #D7F0FE; color: white; text-align: center;">{{row['qt-troca']}}</h4>
+            }
+            
            } 
           
 
@@ -65,7 +71,7 @@
 
   @if(this.temTroca){
     <div class="rodape">
-      <p class="totalItem">Total de Itens: <b>{{this.qtTotal}}</b></p>
+      <p class="totalItem" style="background-color: #D7F0FE">Total de Itens: <b>{{this.qtTotal}}</b></p>
       <div class="destino"><span>Destino: &nbsp; </span>
         <po-combo [ngModel]="codTecnicoDest" p-icon="bi bi-person-workspace"
           [(ngModel)]="codTecnicoDest" style="min-width: 350px;" [p-options]="listaTecnicos" [p-placeholder]="loadTecnico"
@@ -83,7 +89,7 @@
         <po-button p-icon="bi bi-check2-all" p-label="Executar Troca" (p-click)="onExecutar()" p-kind="primary"
         ></po-button>
       </div>
-      <p class="totalItem" style="background-color: var(--color-09); color: white;">Empréstimos: <b> {{this.qtEmprestimos}}</b></p>
+      <p class="totalItem" style="background-color: #D7F0FE">Empréstimos: <b> {{this.qtEmprestimos}}</b></p>
     </div>
     }
 </div>

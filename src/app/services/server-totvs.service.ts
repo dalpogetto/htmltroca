@@ -121,6 +121,7 @@ export class ServerTotvsService {
 
   obterColunasRelatorio(): Array<PoTableColumn> {
     return [
+      { property: 'data', label: 'Data', type: 'date', format: 'dd/MM/yyyy'},
       { property: 'nr-process', label: 'Transação' },
       { property: 'cod-emit-ori', label: 'Téc.Origem' },
       { property: 'nome-abrev-ori', label: 'Nome' },
