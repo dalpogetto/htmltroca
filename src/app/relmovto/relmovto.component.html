@@ -19,6 +19,14 @@
                    p-container="true" 
                    [p-sort]="true"
                    [p-height]="alturaGrid" >
+                   <ng-template p-table-cell-template let-column="column" let-row="row">
+           
+                    @if(column.property === 'opcoes'){
+                        <div class="menuGrid">
+                            <div><button class="btn"  (click)="Detalhe(row)"><p><i class="bi bi-archive"></i> Notas Fiscais</p></button></div>
+                        </div>
+                    }
+                  </ng-template>
           
   </po-table>
 
@@ -37,7 +45,7 @@
         <div class="po-row">
             <po-datepicker
             class="po-md-6"
-            name="dtInicial"
+            name="dtIni"
             [(ngModel)]="dtIni"
             p-clean
             p-format="dd/mm/yyyy"
@@ -49,7 +57,7 @@
 
             <po-datepicker
             class="po-md-6"
-            name="dtFinal"
+            name="dtFim"
             [(ngModel)]="dtFim"
             p-clean
             p-format="dd/mm/yyyy"
@@ -59,6 +67,29 @@
             >
             </po-datepicker>
         </div>
+        <div class="po-row">
+          <po-input
+          class="po-md-6"
+          name="estabIni"
+          [(ngModel)]="estabIni"
+          p-placeholder="Estab Inicial"
+          p-label="Estab Inicial"
+          p-required
+          [p-maxlength]="3"
+          >
+          </po-input>
+
+          <po-input
+          class="po-md-6"
+          name="estabFim"
+          [(ngModel)]="estabFim"
+          p-label="Estab Final"
+          p-placeholder="Estab Final"
+          p-required
+          [p-maxlength]="3"
+          >
+          </po-input>
+      </div>
 
         <div class="po-row">
             <po-input
@@ -68,16 +99,18 @@
             p-placeholder="Técnico Inicial"
             p-label="Técnico Origem Inicial"
             p-required
+            [p-maxlength]="6"
             >
             </po-input>
 
             <po-input
             class="po-md-6"
-            name="tecFinal"
+            name="tecFim"
             [(ngModel)]="tecFim"
             p-label="Técnico Origem Final"
             p-placeholder="Técnico Final"
             p-required
+            [p-maxlength]="6"
             >
             </po-input>
         </div>
@@ -89,18 +122,42 @@
             [(ngModel)]="tecDestIni"
             p-label="Técnico Destino Inicial"
             p-required
+            [p-maxlength]="6"
             >
             </po-input>
 
             <po-input
             class="po-md-6"
-            name="tecDestFinal"
+            name="tecDestFim"
             [(ngModel)]="tecDestFim"
             p-placeholder="Técnico Final"
             p-label="Técnico Destino Final"
             p-required
+            [p-maxlength]="6"
             >
             </po-input>
         </div>
+
+        <div class="po-row">
+          <po-input
+          class="po-md-6"
+          name="itCodigoIni"
+          [(ngModel)]="itCodigoIni"
+          p-label="Item Inicial"
+          p-required
+          [p-maxlength]="16"
+          >
+          </po-input>
+
+          <po-input
+          class="po-md-6"
+          name="itCodigoFim"
+          [(ngModel)]="itCodigoFim"
+          p-label="Item Final"
+          p-required
+          [p-maxlength]="16"
+          >
+          </po-input>
+      </div>
         </form>
   </po-modal>

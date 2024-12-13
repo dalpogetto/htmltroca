@@ -122,14 +122,18 @@ export class ServerTotvsService {
   obterColunasRelatorio(): Array<PoTableColumn> {
     return [
       { property: 'data', label: 'Data', type: 'date', format: 'dd/MM/yyyy'},
+      { property: 'cod-estabel', label: 'Est' },
       { property: 'nr-process', label: 'Transação' },
       { property: 'cod-emit-ori', label: 'Téc.Origem' },
       { property: 'nome-abrev-ori', label: 'Nome' },
+      { property: 'nfe', label: 'NFE' },
+      { property: 'nfs', label: 'NFS' },
       { property: 'cod-emit-dest', label: 'Téc.Destino' },
       { property: 'nome-abrev-dest', label: 'Nome' },
       { property: 'it-codigo', label: 'Item' },
-      { property: 'desc-item', label: 'Descrição' },
+      { property: 'desc-item', label: 'Descrição', width:'180px' },
       { property: 'quantidade', label: 'Qtde' },
+      
 
     ]}
 
@@ -535,6 +539,18 @@ export class ServerTotvsService {
         params,
         headers: headersTotvs,
       })
+      .pipe(take(1));
+  }
+
+  public ObterCadastro(params?: any){
+    return this.http.get(`${this._url}/ObterCadastro`, {params:params, headers:headersTotvs})
+                   .pipe(take(1));
+  }
+
+  //---------------------- Programas DDK
+  public AbrirProgramaTotvs(params?: any) {
+    return this.http
+      .get('/totvs-menu/rest/exec', { params, headers: headersTotvs })
       .pipe(take(1));
   }
 

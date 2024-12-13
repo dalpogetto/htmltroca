@@ -153,7 +153,14 @@ export class DashboardComponent {
     this.esconderPainel();
     //--- Informacoes iniciais tela
     //this.srvTotvs.EmitirParametros({ tituloTela: 'EMPRÉSTIMOS - DASHBOARD DE NOTAS FISCAIS'});
-    this.urlSpool = environment.totvs_spool
+    this.urlSpool = ''
+
+    this.srvTotvs
+      .ObterCadastro({tabela: 'spool', codigo: ''})
+      .subscribe({
+        next: (response: any) => {
+          this.urlSpool = response.desc
+        }})
 
     //Colunas grids
     this.colunasNFE = this.srvTotvs.obterColunasEntradas();

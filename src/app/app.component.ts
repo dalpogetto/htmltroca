@@ -45,10 +45,16 @@ export class AppComponent {
       shortLabel: 'Monitor',
     },
     {
-      label: 'Relatório',
+      label: 'Relatório Movto',
       icon: 'bi bi-printer',
       link: '/relmovto',
       shortLabel: 'RelMovto',
+    },
+    {
+      label: 'Danfe (FT0518)',
+      icon: 'bi bi-printer',
+      shortLabel: 'FT0518',
+      action: () => this.AbrirProgramaTotvs('ftp/ft0518.w'),
     },
   ];
 
@@ -76,6 +82,14 @@ export class AppComponent {
   
   private onClick() {
     alert('Clicked in menu item');
+  }
+
+  AbrirProgramaTotvs(programa: string) {
+    let params: any = { program: programa, params: '' };
+    this.srvTotvs.AbrirProgramaTotvs(params).subscribe({
+      next: (response: any) => {},
+      error: (e) => {},
+    });
   }
 
 

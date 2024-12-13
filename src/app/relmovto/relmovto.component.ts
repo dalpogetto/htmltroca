@@ -41,6 +41,7 @@ export class RelmovtoComponent {
   private srvTotvs = inject(ServerTotvsService)
   private srvExcel = inject(ExcelService)
   private srvNotification = inject(PoNotificationService);
+  private router = inject(Router)
 
 
   readonly acaoSelecionar: PoModalAction = {
@@ -63,6 +64,11 @@ export class RelmovtoComponent {
   tecFim:string='999999'
   tecDestIni:string='0'
   tecDestFim:string='999999'
+  itCodigoIni:string=''
+  itCodigoFim:string='ZZZZZZZZZZZZZZZZ'
+  estabIni:string=''
+  estabFim:string='ZZZ'
+
 
   alturaGrid:number=window.innerHeight - 250
   
@@ -81,6 +87,13 @@ export class RelmovtoComponent {
     this.srvTotvs.EmitirParametros({ tituloTela: 'EMPRÉSTIMOS - RELATÓRIO MOVIMENTAÇÕES'});
   }
 
+  Detalhe(obj:any){
+
+    this.srvTotvs.SetarUsuario(obj["cod-estabel"], obj["cod-emit-ori"], obj["nr-process"])
+    this.router.navigate(['dashboard'])
+
+  }
+
   Selecionar(){
     this.loadTela=true
     let paramsTela: any = { paramsTela: this.formSelecao.value }
@@ -88,8 +101,9 @@ export class RelmovtoComponent {
     this.srvTotvs.ObterDadosRelatorio(paramsTela).subscribe({
       next:(response:any)=>{
         if (response === null){
+          this.lista=[]
           this.srvNotification.warning("Não existe dados para o range de seleção !")
-           return
+          return
         }
         this.lista = response.items;
         this.loadTela=false
